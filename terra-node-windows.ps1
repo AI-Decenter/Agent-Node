@@ -2,7 +2,7 @@
 # Usage: 
 #   PowerShell -ExecutionPolicy Bypass -File terra-node-windows.ps1 -ClientId "your_id" -ClientPassword "your_password"
 # Or one-liner:
-#   iwr -useb https://raw.githubusercontent.com/binhtruong9418/demo-deploy/main/terra-node-windows.ps1 | iex
+#   iwr -useb https://raw.githubusercontent.com/AI-Decenter/Agent-Node/main/terra-node-windows.ps1 | iex
 
 param(
     [Parameter(Mandatory=$false)]
