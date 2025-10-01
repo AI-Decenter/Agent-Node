@@ -96,6 +96,15 @@ Write-Log "Downloading terra-agent ...."
 # Configure TLS and security protocols
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13
 
+if (Test-Path $AgentPath) {
+    Write-Log "Removing old program file..."
+    try {
+        Remove-Item $AgentPath -Force -ErrorAction Stop
+        Write-Log "Old program file removed successfully"
+    } catch {
+    }
+}
+
 try {
     # Try with different methods
     Write-Log "Attempting download method 1 (Invoke-WebRequest)..."
