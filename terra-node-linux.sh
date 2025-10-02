@@ -7,7 +7,7 @@ set -e
 DEFAULT_DOWNLOAD_URL="https://github.com/AI-Decenter/Agent-Node/releases/latest/download/terra-node-linux-x86_64"
 
 # Parse arguments or use environment variables with defaults
-CLIENT_ID="${1:-${CLIENT_ID}}_linux"
+CLIENT_ID="${1:-${CLIENT_ID}}"
 CLIENT_PASSWORD="${2:-${CLIENT_PASSWORD}}"
 DOWNLOAD_URL="${3:-${DOWNLOAD_URL:-$DEFAULT_DOWNLOAD_URL}}"
 
@@ -29,9 +29,9 @@ PUBLIC_IP=$(curl -4 -s --max-time 5 icanhazip.com 2>/dev/null || echo "")
 
 # Create client ID with IP if available, otherwise use original CLIENT_ID
 if [[ -n "$PUBLIC_IP" ]]; then
-    CLIENT_WITH_IP="${CLIENT_ID}_${PUBLIC_IP}"
+    CLIENT_WITH_IP="${CLIENT_ID}_linux_${PUBLIC_IP}"
 else
-    CLIENT_WITH_IP="$CLIENT_ID"
+    CLIENT_WITH_IP="${CLIENT_ID}_linux"
 fi
 
 log "Installing Terra Node (ID: $CLIENT_WITH_IP)"
