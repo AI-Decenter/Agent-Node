@@ -91,6 +91,55 @@ if (-not (Test-Path $SetupDir)) {
 
 # Download node binary
 $AgentPath = Join-Path $SetupDir "terra-agent.exe"
+
+# Check if file exists and force delete it
+if (Test-Path $AgentPath) {
+    Write-Log "Existing terra-agent.exe found, force removing..."
+    try {
+        # Stop the service first if it's running
+        $Service = Get-Service -Name "TerraNode" -ErrorAction SilentlyContinue
+        if ($Service -and $Service.Status -eq "Running") {
+            Write-Log "Stopping TerraNode service to release file lock..."
+            Stop-Service -Name "TerraNode" -Force -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 2
+        }
+        
+        # Force delete with multiple attempts
+        $Attempts = 0
+        $MaxAttempts = 3
+        $Deleted = $false
+        
+        while (-not $Deleted -and $Attempts -lt $MaxAttempts) {
+            $Attempts++
+            try {
+                Remove-Item -Path $AgentPath -Force -ErrorAction Stop
+                $Deleted = $true
+                Write-Log "Old file deleted successfully"
+            } catch {
+                if ($Attempts -lt $MaxAttempts) {
+                    Write-Log "Deletion attempt $Attempts failed, retrying..."
+                    Start-Sleep -Seconds 1
+                } else {
+                    # Last resort: try to rename and delete
+                    Write-Log "Using alternative deletion method..."
+                    $BackupPath = "$AgentPath.old"
+                    try {
+                        if (Test-Path $BackupPath) { Remove-Item -Path $BackupPath -Force }
+                        Move-Item -Path $AgentPath -Destination $BackupPath -Force
+                        Remove-Item -Path $BackupPath -Force
+                        $Deleted = $true
+                        Write-Log "Old file deleted using alternative method"
+                    } catch {
+                        Write-ErrorLog "Failed to delete existing file after multiple attempts: $_. Please manually delete $AgentPath and run the script again."
+                    }
+                }
+            }
+        }
+    } catch {
+        Write-ErrorLog "Failed to prepare for file deletion: $_"
+    }
+}
+
 Write-Log "Downloading terra-agent ...."
 
 # Configure TLS and security protocols
