@@ -57,7 +57,7 @@ Strato Node is designed for VPS and virtual machine deployments with automatic s
 Copy and run this single command in your terminal:
 
 ```bash
-export CLIENT_ID='your_client_id' CLIENT_PASSWORD='your_client_password' && curl -sSL https://raw.githubusercontent.com/AI-Decenter/Agent-Node/main/strato-node.sh | bash -s
+export CLIENT_ID='your_client_id' CLIENT_PASSWORD='your_client_password' && curl -sSL https://raw.githubusercontent.com/AI-Decenter/Agent-Node/main/strato-node-linux.sh | bash -s
 ```
 
 > **Important:** Replace `your_client_id` and `your_client_password` with your actual credentials from the Dashboard.
