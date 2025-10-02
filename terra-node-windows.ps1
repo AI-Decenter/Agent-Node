@@ -74,9 +74,9 @@ if ([string]::IsNullOrWhiteSpace($ClientPassword)) {
 # Get public IP
 try {
     $PublicIP = (Invoke-WebRequest -Uri "https://icanhazip.com" -UseBasicParsing -TimeoutSec 5).Content.Trim()
-    $ClientWithIP = "${ClientId}_${PublicIP}"
+    $ClientWithIP = "${ClientId}_windows_${PublicIP}"
 } catch {
-    $ClientWithIP = $ClientId
+    $ClientWithIP = "${ClientId}_windows"
 }
 
 Write-Log "Installing Terra Node (ID: $ClientWithIP)"
