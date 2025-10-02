@@ -1,6 +1,6 @@
 #!/bin/bash
 # Strato Node Setup Script - One-command node installation
-# Usage: curl -sSL https://raw.githubusercontent.com/AI-Decenter/Agent-Node/main/strato-node.sh | bash -s -- [client_id] [client_password]
+# Usage: curl -sSL https://raw.githubusercontent.com/AI-Decenter/Agent-Node/main/strato-node-linux.sh | bash -s -- [client_id] [client_password]
 set -e
 
 # Default configuration
