@@ -12,7 +12,7 @@ param(
     [string]$ClientPassword = $env:CLIENT_PASSWORD,
     
     [Parameter(Mandatory=$false)]
-    [string]$DownloadUrl = "https://github.com/AI-Decenter/Agent-Node/releases/latest/download/terra-node-windows-x86_64.exe"
+    [string]$DownloadUrl = "https://github.com/AI-Decenter/Agent-Node/releases/latest/download/agent-node-windows-x86_64.exe"
 )
 
 # Require Administrator privileges
