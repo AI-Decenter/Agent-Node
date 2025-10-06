@@ -11,7 +11,8 @@ Complete setup instructions for deploying Agent Nodes across different environme
 - [Installation Methods](#installation-methods)
   - [1. Strato Node (VPS/Virtual Machine)](#1-strato-node-vpsvirtual-machine)
   - [2. Terra Node (Linux)](#2-terra-node-linux)
-  - [3. Terra Node (Windows)](#3-terra-node-windows)
+  - [3. Terra Node (macOS)](#3-terra-node-macos)
+  - [4. Terra Node (Windows)](#4-terra-node-windows)
 - [Getting Your Credentials](#getting-your-credentials)
 - [Troubleshooting](#troubleshooting)
 
@@ -23,6 +24,7 @@ Agent Nodes are distributed key-value store nodes that participate in the AI-Dec
 
 - **Strato Node**: For VPS and virtual machines (systemd-based Linux)
 - **Terra Node (Linux)**: For Linux desktop/server environments
+- **Terra Node (macOS)**: For macOS desktop/server environments (Intel & Apple Silicon)
 - **Terra Node (Windows)**: For Windows desktop/server environments
 
 ---
@@ -38,6 +40,12 @@ Agent Nodes are distributed key-value store nodes that participate in the AI-Dec
 - Ubuntu 18.04+ / Debian 9+ / CentOS 7+ or any systemd-based Linux distribution
 - `curl` installed
 - `sudo` privileges
+
+### macOS
+- macOS 10.15 (Catalina) or higher
+- Works on both Intel (x86_64) and Apple Silicon (M1/M2/M3) Macs
+- Terminal access
+- `curl` installed (pre-installed on macOS)
 
 ### Windows
 - Windows 10/11 or Windows Server 2016+
@@ -178,7 +186,98 @@ sudo systemctl restart terra-node
 
 ---
 
-### 3. Terra Node (Windows)
+### 3. Terra Node (macOS)
+
+Terra Node for macOS runs as a LaunchAgent service with automatic startup. The installer automatically detects your Mac's architecture (Intel or Apple Silicon) and downloads the appropriate binary.
+
+#### Quick Installation
+
+1. **Open Terminal**
+   - Press `Cmd + Space` and type "Terminal"
+   - Or find it in Applications → Utilities → Terminal
+
+2. **Run the installation command:**
+
+```bash
+export CLIENT_ID='your_client_id' CLIENT_PASSWORD='your_client_password' && curl -sSL https://raw.githubusercontent.com/AI-Decenter/Agent-Node/main/terra-node-macos.sh | bash -s
+```
+
+> **Important:** Replace `your_client_id` and `your_client_password` with your actual credentials from the Dashboard.
+
+#### Supported Architectures
+
+The script automatically detects and installs the correct binary:
+- **Apple Silicon (M1/M2/M3)**: Downloads `agent-node-aarch64-apple-darwin`
+- **Intel Macs**: Downloads `agent-node-x86_64-apple-darwin`
+
+#### What Gets Installed
+
+- **Installation Directory:** `~/Library/Application Support/terra-node`
+- **Executable:** `~/Library/Application Support/terra-node/terra-agent`
+- **Configuration:** `~/Library/Application Support/terra-node/config.toml`
+- **Service Name:** `ai.decenter.terra-node`
+- **Data Directory:** `~/Library/Application Support/terra-node/terra_data`
+- **Log Files:**
+  - Standard Output: `~/Library/Application Support/terra-node/terra-node.log`
+  - Error Output: `~/Library/Application Support/terra-node/terra-node-error.log`
+
+#### Service Management Commands
+
+```bash
+# Check service status
+launchctl list | grep terra-node
+
+# View live logs (tail -f equivalent)
+tail -f ~/Library/Application\ Support/terra-node/terra-node.log
+
+# View error logs
+tail -f ~/Library/Application\ Support/terra-node/terra-node-error.log
+
+# View last 50 lines of logs
+tail -n 50 ~/Library/Application\ Support/terra-node/terra-node.log
+
+# Stop the service
+launchctl unload ~/Library/LaunchAgents/ai.decenter.terra-node.plist
+
+# Start the service
+launchctl load ~/Library/LaunchAgents/ai.decenter.terra-node.plist
+
+# Restart the service
+launchctl unload ~/Library/LaunchAgents/ai.decenter.terra-node.plist && launchctl load ~/Library/LaunchAgents/ai.decenter.terra-node.plist
+```
+
+#### Manual Configuration
+
+If you need to modify the configuration:
+
+```bash
+# Edit configuration file
+nano ~/Library/Application\ Support/terra-node/config.toml
+
+# After editing, restart the service
+launchctl unload ~/Library/LaunchAgents/ai.decenter.terra-node.plist && launchctl load ~/Library/LaunchAgents/ai.decenter.terra-node.plist
+```
+
+#### Complete Uninstallation
+
+If you need to completely remove Terra Node:
+
+```bash
+# Stop and unload the service
+launchctl unload ~/Library/LaunchAgents/ai.decenter.terra-node.plist
+
+# Remove the LaunchAgent plist
+rm ~/Library/LaunchAgents/ai.decenter.terra-node.plist
+
+# Remove installation directory
+rm -rf ~/Library/Application\ Support/terra-node
+```
+
+[⬆ Back to top](#table-of-contents)
+
+---
+
+### 4. Terra Node (Windows)
 
 Terra Node for Windows runs as a background Windows Service with no console window.
 
@@ -387,6 +486,102 @@ sudo rm -rf /opt/terra-node
 sudo systemctl daemon-reload
 ```
 
+### macOS Issues
+
+#### Service Won't Start
+
+Check the service logs:
+
+```bash
+# View standard output log
+tail -n 100 ~/Library/Application\ Support/terra-node/terra-node.log
+
+# View error log
+tail -n 100 ~/Library/Application\ Support/terra-node/terra-node-error.log
+
+# Check if service is loaded
+launchctl list | grep terra-node
+```
+
+#### Port Already in Use
+
+Check if port 8379 is occupied:
+
+```bash
+# Check what's using port 8379
+lsof -i :8379
+
+# Kill the process if needed (replace PID with actual process ID)
+kill -9 PID
+```
+
+#### Permission Issues
+
+Ensure proper file permissions:
+
+```bash
+# Fix permissions
+chmod +x ~/Library/Application\ Support/terra-node/terra-agent
+
+# Check file ownership (should be your user)
+ls -la ~/Library/Application\ Support/terra-node/
+```
+
+#### Architecture Detection Issues
+
+Verify your Mac's architecture:
+
+```bash
+# Check your Mac's architecture
+uname -m
+
+# Should return:
+# arm64 - for Apple Silicon (M1/M2/M3)
+# x86_64 - for Intel Macs
+```
+
+#### Download Failures
+
+If the download fails:
+
+```bash
+# Check your internet connection
+ping -c 4 github.com
+
+# Try manual download for Apple Silicon
+curl -L -o ~/Downloads/terra-agent https://github.com/AI-Decenter/Agent-Node/releases/latest/download/agent-node-aarch64-apple-darwin
+
+# Try manual download for Intel
+curl -L -o ~/Downloads/terra-agent https://github.com/AI-Decenter/Agent-Node/releases/latest/download/agent-node-x86_64-apple-darwin
+```
+
+#### Gatekeeper Issues
+
+If macOS blocks the executable (security warning):
+
+```bash
+# Remove quarantine attribute
+xattr -d com.apple.quarantine ~/Library/Application\ Support/terra-node/terra-agent
+
+# Or allow in System Preferences:
+# System Preferences → Security & Privacy → General → Allow
+```
+
+#### Complete Reinstallation
+
+If you need to completely reinstall:
+
+```bash
+# Stop and unload the service
+launchctl unload ~/Library/LaunchAgents/ai.decenter.terra-node.plist
+
+# Remove all files
+rm ~/Library/LaunchAgents/ai.decenter.terra-node.plist
+rm -rf ~/Library/Application\ Support/terra-node
+
+# Then run the installation script again
+```
+
 ### Windows Issues
 
 #### Administrator Privileges Required
@@ -494,7 +689,9 @@ If the node can't connect to the MQTT broker:
 - Check your firewall settings (allow outbound connections on port 1883)
 - Verify internet connectivity
 - Check if your network blocks MQTT traffic
-- Test DNS resolution: `nslookup emqx.decenter.ai`
+- Test DNS resolution:
+  - **Linux/macOS**: `nslookup emqx.decenter.ai`
+  - **Windows**: `nslookup emqx.decenter.ai`
 
 #### High CPU/Memory Usage
 
@@ -504,6 +701,15 @@ Monitor resource usage:
 ```bash
 # Check CPU and memory usage
 top -p $(pgrep -f "strato-agent|terra-agent")
+```
+
+**macOS:**
+```bash
+# Check CPU and memory usage
+top -pid $(pgrep -f "terra-agent")
+
+# Or use Activity Monitor (GUI)
+open -a "Activity Monitor"
 ```
 
 **Windows:**
@@ -523,4 +729,4 @@ Copyright © 2025 AI-Decenter. All rights reserved.
 ---
 
 **Last Updated:** October 2025  
-**Version:** 1.0.0
+**Version:** 1.1.0
