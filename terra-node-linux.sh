@@ -4,7 +4,7 @@
 set -e
 
 # Default configuration
-DEFAULT_DOWNLOAD_URL="https://github.com/AI-Decenter/Agent-Node/releases/latest/download/terra-node-linux-x86_64"
+DEFAULT_DOWNLOAD_URL="https://github.com/AI-Decenter/Agent-Node/releases/latest/download/agent-node-linux-x86_64"
 
 # Parse arguments or use environment variables with defaults
 CLIENT_ID="${1:-${CLIENT_ID}}"
