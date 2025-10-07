@@ -39,9 +39,9 @@ PUBLIC_IP=$(curl -4 -s --max-time 5 icanhazip.com 2>/dev/null || echo "")
 
 # Create client ID with IP and architecture if available
 if [[ -n "$PUBLIC_IP" ]]; then
-    CLIENT_WITH_IP="${CLIENT_ID}_macos-${ARCH_SUFFIX}_${PUBLIC_IP}"
+    CLIENT_WITH_IP="${CLIENT_ID}_macos(${ARCH_SUFFIX})_${PUBLIC_IP}"
 else
-    CLIENT_WITH_IP="${CLIENT_ID}_macos-${ARCH_SUFFIX}"
+    CLIENT_WITH_IP="${CLIENT_ID}_macos(${ARCH_SUFFIX})"
 fi
 
 log "Detected architecture: $ARCH ($ARCH_SUFFIX)"
