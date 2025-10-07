@@ -11,7 +11,7 @@ if [[ "$ARCH" == "arm64" ]]; then
     ARCH_SUFFIX="arm64"
 elif [[ "$ARCH" == "x86_64" ]]; then
     DEFAULT_DOWNLOAD_URL="https://github.com/AI-Decenter/Agent-Node/releases/latest/download/agent-node-x86_64-apple-darwin"
-    ARCH_SUFFIX="x86-64"
+    ARCH_SUFFIX="x8664"
 else
     error "Unsupported architecture: $ARCH. Only arm64 (Apple Silicon) and x86_64 (Intel) are supported."
 fi
